@@ -169,6 +169,14 @@ namespace SaneAudioRenderer
                 CreateAudioClient(pEnumerator, device);
 
                 if (!device.audioClient)
+                {
+                    // MPC-HC custom code: the chosen device was not found, check the default audio device,
+                    // because that is what CreateAudioDeviceBackend falls back to for playback
+                    device.id = nullptr;
+                    CreateAudioClient(pEnumerator, device);
+                }
+
+                if (!device.audioClient)
                     return E_FAIL;
 
                 return device.audioClient->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, &(*format), nullptr);
